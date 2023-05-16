@@ -50,6 +50,7 @@ describe('TasksService', () => {
           id: expect.anything(),
           userId: user.id,
           content: 'some content',
+          status: 'active',
         },
       ]);
     });
@@ -79,6 +80,29 @@ describe('TasksService', () => {
     });
   });
 
+  describe('delete', () => {
+    beforeAll(async () => {
+      await prismaService.task.createMany({
+        data: [
+          { userId: user.id, content: 'some content' },
+          { userId: user.id, content: 'some another content' },
+          { userId: anotherUser.id, content: 'some another content' },
+        ],
+      });
+    });
+
+    it('should set status to deleted', async () => {
+      const taskToUpdate = await prismaService.task.findFirst();
+
+      const updatedTask = await tasksService.delete({
+        userId: user.id,
+        taskId: taskToUpdate.id,
+      });
+
+      expect(updatedTask.status).toBe('deleted');
+    });
+  });
+
   describe('getAll', () => {
     beforeAll(async () => {
       await prismaService.task.createMany({
@@ -99,12 +123,14 @@ describe('TasksService', () => {
         id: expect.anything(),
         userId: user.id,
         content: 'some content',
+        status: 'active',
       });
 
       expect(tasks).toContainEqual({
         id: expect.anything(),
         userId: user.id,
         content: 'some another content',
+        status: 'active',
       });
     });
   });

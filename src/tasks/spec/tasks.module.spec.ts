@@ -71,11 +71,17 @@ describe('TasksModule', () => {
 
       expect(response.body).toEqual({
         tasks: [
-          { content: 'some content', id: expect.anything(), userId: user.id },
+          {
+            content: 'some content',
+            id: expect.anything(),
+            userId: user.id,
+            status: 'active',
+          },
           {
             content: 'another content',
             id: expect.anything(),
             userId: user.id,
+            status: 'active',
           },
         ],
       });
@@ -88,6 +94,37 @@ describe('TasksModule', () => {
           tasks: [{ content: 'some content' }, { content: 'another content' }],
         })
         .expect(401);
+    });
+  });
+
+  describe('DELETE ̯/', () => {
+    beforeEach(async () => {
+      await prismaService.task.createMany({
+        data: [
+          { content: 'some content', userId: user.id },
+          { content: 'another content', userId: user.id },
+          { content: 'other user content', userId: anotherUser.id },
+        ],
+      });
+    });
+
+    it('should set task status to deleted', async () => {
+      const taskToDelete = await prismaService.task.findFirst();
+
+      const response = await request(app.getHttpServer())
+        .delete('/tasks')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          taskId: taskToDelete.id,
+        })
+        .expect(200);
+
+      expect(response.body).toEqual({
+        task: {
+          ...taskToDelete,
+          status: 'deleted',
+        },
+      });
     });
   });
 
@@ -110,11 +147,17 @@ describe('TasksModule', () => {
 
       expect(response.body).toEqual({
         tasks: [
-          { content: 'some content', id: expect.anything(), userId: user.id },
+          {
+            content: 'some content',
+            id: expect.anything(),
+            userId: user.id,
+            status: 'active',
+          },
           {
             content: 'another content',
             id: expect.anything(),
             userId: user.id,
+            status: 'active',
           },
         ],
       });

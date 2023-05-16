@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreateTaskProps, GetAllTasksProps } from './interfaces/CrudProps';
+import {
+  CreateTaskProps,
+  DeleteTaskProps,
+  GetAllTasksProps,
+} from './interfaces/CrudProps';
 
 @Injectable()
 export class TasksService {
@@ -8,7 +12,7 @@ export class TasksService {
 
   async getAll({ userId }: GetAllTasksProps) {
     return await this.prismaService.task.findMany({
-      where: { userId },
+      where: { userId, status: 'active' },
     });
   }
 
@@ -31,5 +35,23 @@ export class TasksService {
     ]);
 
     return createdTasks;
+  }
+
+  async delete({ userId, taskId }: DeleteTaskProps) {
+    return await this.prismaService.$transaction(async (transaction) => {
+      const task = await transaction.task.findFirst({
+        where: {
+          userId,
+          id: taskId,
+        },
+      });
+
+      return await transaction.task.update({
+        data: {
+          status: 'deleted',
+        },
+        where: { id: task.id },
+      });
+    });
   }
 }

@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('Default', 'Premium', 'Admin');
 
+-- CreateEnum
+CREATE TYPE "TaskStatus" AS ENUM ('active', 'deleted');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -16,6 +19,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Task" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "status" "TaskStatus" NOT NULL DEFAULT 'active',
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")

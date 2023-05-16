@@ -9,3 +9,7 @@ export interface CreateTaskProps extends WithUserId {
     content: string;
   }[];
 }
+
+export interface DeleteTaskProps extends WithUserId {
+  taskId: string;
+}

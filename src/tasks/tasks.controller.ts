@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   InternalServerErrorException,
   Post,
@@ -11,6 +12,7 @@ import { CreateTaskProps } from './interfaces/ControllerParams';
 import { TasksService } from './tasks.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthGuardedRequest } from '../auth/interfaces/AuthGuardedRequest';
+import { DeleteTaskProps } from './interfaces/CrudProps';
 
 @Controller('tasks')
 export class TasksController {
@@ -41,6 +43,28 @@ export class TasksController {
 
       return {
         tasks,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  async delete(
+    @Request() request: AuthGuardedRequest,
+    @Body() deleteTaskProps: DeleteTaskProps,
+  ) {
+    const { userId } = request.jwt;
+
+    try {
+      const task = await this.tasksService.delete({
+        userId,
+        taskId: deleteTaskProps.taskId,
+      });
+
+      return {
+        task,
       };
     } catch (error) {
       throw new InternalServerErrorException();

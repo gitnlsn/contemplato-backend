@@ -5,3 +5,7 @@ interface Task {
 export interface CreateTaskProps {
   tasks: Task[];
 }
+
+export interface DeleteTaskProps {
+  taskId: string;
+}
