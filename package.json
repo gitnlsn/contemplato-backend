@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "docker build -t contemplato-backend .",
-    "start": "docker run -p 3000:3000 --network host contemplato-backend:latest",
+    "start": "docker run -p 3003:3003 --network host contemplato-backend:latest",
     "test": "docker compose up -d && sleep 1 && npx prisma migrate dev && jest --coverage && docker compose down"
   },
   "dependencies": {

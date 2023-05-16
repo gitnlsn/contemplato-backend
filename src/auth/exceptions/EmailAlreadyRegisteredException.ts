@@ -1,4 +1,4 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export const EmailAlreadyRegisterdExpection = () =>
-  new HttpException('Email already registered', HttpStatus.CONFLICT);
+export const UsernameAlreadyRegisterdExpection = () =>
+  new HttpException('Username already registered', HttpStatus.CONFLICT);
